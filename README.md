@@ -6,7 +6,7 @@ API Compatible with [Godot Appodeal Android plugin](https://github.com/PoqXert/g
 ## Setup
 
 1. [Get Godot source](https://docs.godotengine.org/en/stable/development/compiling/getting_source.html).
-2. Clone this repository to ``godot/modules`` folder.
+2. Copy files from this repository to ``godot/modules/appodeal`` folder.
 3. Add ``Appodeal.framework`` to ``lib`` subfolder.
 4. [Compile for iOS](https://docs.godotengine.org/en/stable/development/compiling/compiling_for_ios.html).
 5. After export Godot-project to XCode-project, replace ``GameName.a`` in XCode-project to file got on previous step.
