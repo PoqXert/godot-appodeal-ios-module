@@ -1,5 +1,8 @@
 
 Import('env')
+Import('env_modules')
+
+gacm_env = env_modules.Clone()
 
 sources = [
            'register_types.cpp',
@@ -7,4 +10,5 @@ sources = [
            ]
 
 if (env["platform"] == "iphone"):
-    env.add_source_files(env.modules_sources, sources)
+    gacm_env.Append(CCFLAGS=["-fmodules", "-fcxx-modules"])
+    gacm_env.add_source_files(env.modules_sources, sources)

@@ -9,6 +9,11 @@
 #import <Appodeal/Appodeal.h>
 #include "helper.h"
 
+#if __has_include(<AppTrackingTransparency/AppTrackingTransparency.h>)
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
+#endif
+
+
 static GodotAppodeal *godotAppodealInstance = NULL;
 
 @interface GodotAppodealInterstitial: NSObject<AppodealInterstitialDelegate>
@@ -368,6 +373,30 @@ void GodotAppodeal::trackInAppPurchase(int val, const String &currency) {
     [Appodeal trackInAppPurchase:[NSNumber numberWithInt:val] currency:strCurrency];
 }
 
+void GodotAppodeal::requestTrackingAuthorization() {
+#if __has_include(<AppTrackingTransparency/AppTrackingTransparency.h>)
+    if(@available(iOS 14, *)) {
+        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+            godotAppodealInstance->emit_signal("tracking_request_completed", (int)status);
+        }];
+    } else {
+        godotAppodealInstance->emit_signal("tracking_request_completed", 0);
+    }
+#else
+    godotAppodealInstance->emit_signal("tracking_request_completed", 0);
+#endif
+}
+
+int GodotAppodeal::getTrackingAuthorizationStatus() {
+    int status = 0;
+#if __has_include(<AppTrackingTransparency/AppTrackingTransparency.h>)
+    if(@available(iOS 14, *)) {
+        status = (int)[ATTrackingManager trackingAuthorizationStatus];
+    }
+#endif
+    return status;
+}
+
 void GodotAppodeal::_bind_methods() {
     ClassDB::bind_method(D_METHOD("setTestingEnabled", "testing"), &GodotAppodeal::setTestingEnabled);
     ClassDB::bind_method(D_METHOD("disableNetworks", "networks"), &GodotAppodeal::disableNetworks);
@@ -400,6 +429,8 @@ void GodotAppodeal::_bind_methods() {
     ClassDB::bind_method(D_METHOD("setBannerAnimationEnabled", "enabled"), &GodotAppodeal::setBannerAnimationEnabled);
     ClassDB::bind_method(D_METHOD("getRewardForPlacement", "placement"), &GodotAppodeal::getRewardForPlacement);
     ClassDB::bind_method(D_METHOD("trackInAppPurchase", "value", "currency"), &GodotAppodeal::trackInAppPurchase);
+    ClassDB::bind_method(D_METHOD("requestTrackingAuthorization"), &GodotAppodeal::requestTrackingAuthorization);
+    ClassDB::bind_method(D_METHOD("getTrackingAuthorizationStatus"), &GodotAppodeal::getTrackingAuthorizationStatus);
     // Interstitial
     ADD_SIGNAL(MethodInfo("interstitial_loaded"));
     ADD_SIGNAL(MethodInfo("interstitial_load_failed"));
@@ -430,4 +461,6 @@ void GodotAppodeal::_bind_methods() {
     ADD_SIGNAL(MethodInfo("non_skippable_video_shown"));
     ADD_SIGNAL(MethodInfo("non_skippable_video_show_failed"));
     ADD_SIGNAL(MethodInfo("non_skippable_video_closed"));
+    //Tracking
+    ADD_SIGNAL(MethodInfo("tracking_request_completed"));
 }

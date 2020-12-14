@@ -62,6 +62,9 @@ public:
     Dictionary getRewardForPlacement(const String &placement);
     
     void trackInAppPurchase(int val, const String &currency);
+    
+    void requestTrackingAuthorization();
+    int getTrackingAuthorizationStatus();
 };
 
 #endif /* appodeal_h */

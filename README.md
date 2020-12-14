@@ -1,7 +1,7 @@
 # godot-appodeal-ios-module
 Godot Appodeal iOS Module
 
-API Compatible with [Godot Appodeal Android plugin](https://github.com/PoqXert/godot-appodeal-android-plugin) (exclude Android-only methods).
+API Compatible with [Godot Appodeal Android plugin](https://github.com/PoqXert/godot-appodeal-android-plugin) (exclude [platform specific](#ios-only)).
 
 ## Setup
 
@@ -333,4 +333,33 @@ signal non_skippable_video_closed(finished: bool)
 ```gdscript
 # Emit when non-skippable video is expired
 signal non_skippable_video_expired()
+```
+
+## iOS-only
+This methods and signals available on iOS only.
+
+Configure info.plist by [iOS 14 Network Support](https://wiki.appodeal.com/en/ios/ios-14-network-support) section
+### Tracking Authorization Status
+```gdscript
+enum TrackingAuthorizationStatus {
+  NOT_DETERMINED = 0,
+  RESTRICTED = 1,
+  DENIED = 2,
+  AUTHORIZED = 3,
+}
+```
+
+### Methods
+```gdscript
+# Request access to IDFA
+func requestTrackingAuthorization() -> void
+```
+```gdscript
+# Get tracking authorization status
+func getTrackingAuthorizationStatus() -> int
+```
+### Signals
+```gdscript
+# Emit when request tracking authorization completed
+signal tracking_request_completed(status: int)
 ```
